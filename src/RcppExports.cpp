@@ -12,24 +12,13 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rig
-double rig(double mu);
-RcppExport SEXP _CAPPMx_rig(SEXP muSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    rcpp_result_gen = Rcpp::wrap(rig(mu));
-    return rcpp_result_gen;
-END_RCPP
-}
 // log_sum_exp
-double log_sum_exp(arma::vec x);
+double log_sum_exp(const arma::vec& x);
 RcppExport SEXP _CAPPMx_log_sum_exp(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type x(xSEXP);
     rcpp_result_gen = Rcpp::wrap(log_sum_exp(x));
     return rcpp_result_gen;
 END_RCPP
@@ -137,7 +126,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_CAPPMx_rig", (DL_FUNC) &_CAPPMx_rig, 1},
     {"_CAPPMx_log_sum_exp", (DL_FUNC) &_CAPPMx_log_sum_exp, 1},
     {"_CAPPMx_sanity", (DL_FUNC) &_CAPPMx_sanity, 1},
     {"_CAPPMx_mixture_cat", (DL_FUNC) &_CAPPMx_mixture_cat, 11},

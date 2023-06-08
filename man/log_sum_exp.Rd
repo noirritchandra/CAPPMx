@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{log_sum_exp}
 \alias{log_sum_exp}
-\title{log_sum_exp}
+\title{The natural logarithm of the sum of the exponentials of the arguments}
 \usage{
 log_sum_exp(x)
 }
@@ -14,4 +14,9 @@ The natural logarithm of sum of \code{exp(x)}
 }
 \description{
 A numerically stable version of \code{log(sum(exp(x)))}
+}
+\examples{
+x=c(-1000,-1001)
+log(sum(exp(x))) ##naive implementation
+log_sum_exp(x) ##numerically stable implementation
 }

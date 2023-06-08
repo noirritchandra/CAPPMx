@@ -79,38 +79,19 @@ double log_marg_dens (const arma::mat &chol_marginal_delta,int n,double t1ppp
   return dens;
 }
 
-// [[Rcpp::export]]
-double rig(double mu){
-  double y = randn<double>();
-  y *= y;
-  double mu2 = gsl_pow_2(mu);
-  double quad = 4 * mu * y + mu2 * gsl_pow_2(y);
-  // double x = mu + y * mu2 / 2 - mu / 2  * sqrt(quad);
-  double  x_div_mu=(2+mu*y - sqrt(quad) )/2;
-  double  x = (mu* x_div_mu);
-  if(x<=0){
-    // Rcpp::Rcout<<"mu= "<<mu<<" y= "<<y<<endl;
-    // Rcpp::stop("Error at rig!!");
-    // x=0;
-    // Rcpp::Rcout<<"manual return at rig!!"<<endl;
-    return(1e-5);
-  }
-  
-  double u = log (randu<double>());
-  // if(u <= (mu / (x + mu))) return x;
-  if(u <=  -log1p(x_div_mu) ) return x;
-  else return mu / x_div_mu;
-}
-
-//' log_sum_exp
+//'  The natural logarithm of the sum of the exponentials of the arguments
 //'
 //' A numerically stable version of \code{log(sum(exp(x)))}
 //' @param x a numeric vector
 //'
 //' @return The natural logarithm of sum of \code{exp(x)}
 //' @export
+//' @examples
+//' x=c(-1000,-1001)
+//' log(sum(exp(x))) ##naive implementation
+//' log_sum_exp(x) ##numerically stable implementation
 // [[Rcpp::export]]
-double log_sum_exp(arma::vec x) 
+double log_sum_exp(const arma::vec &x) 
 {
   arma::uword max_ind=x.index_max();
   double maxVal= x(max_ind);
@@ -1811,7 +1792,7 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
             beta_post=beta0+  (ss_j -  ((double) nj_val2(j)-1) * gsl_pow_2(mean_j )  + tmp* gsl_pow_2(mean_j - mu0) )/2.0;
             sigma_post =sqrt( beta_post * (df_post+1)/(df_post *alpha_post) );
             st(jj)=r_trunclst(2*alpha_post,  mu_post, sigma_post,  st_original(jj), std::numeric_limits<double>::max()); 
-            //df_post is not the degrees of freedom, its the precisin parameter
+            //df_post is not the degrees of freedom, its the precision parameter
             st(jj)= GSL_MIN_DBL(st(jj), max_st );
             /*if(st(jj)>log(100*52))
              Rcpp::Rcout<<"jj="<<jj << " st_original(jj)="<<st_original(jj)<< " st(jj)="<<st(jj)<<endl;*/
@@ -1892,7 +1873,7 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
         // non_empty_clusters2=  find(nj_val2);
         arma::vec log_probs1=log_probs(non_empty_clusters2);
         log_DEN=log_sum_exp(log_probs1);
-        probs1=normalise(exp(log_probs1-log_DEN) ,1);
+        probs1=exp(log_probs1-log_DEN); //normalise(exp(log_probs1-log_DEN) ,1);
         // Rcpp::Rcout<<"flag 3"<<endl;
       } else{//this is for G_2
         // Rcpp::Rcout<<" G2"<<endl;
@@ -2121,46 +2102,6 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
     
     
     /****************HMC UPDATE OF mu0, beta0**********/
-    /*arma::vec  proposed_params(2), del_pi_current, del_pi_proposed;
-     
-     del_pi_current= delpi_lognorm(nj_val1, nj_val2, survtime1,  ss_survtime1, 
-     survtime2, ss_survtime2,  
-     current_params, a0, df0, 
-     mu_m, mu_v, b_m, b_v);
-     proposed_params = current_params +tau* del_pi_current +sqrt(2*tau) * arma::vec(2, fill::randn);
-     
-     del_pi_proposed= delpi_lognorm(nj_val1, nj_val2, survtime1,  ss_survtime1, 
-     survtime2, ss_survtime2,  
-     proposed_params, a0, df0, 
-     mu_m, mu_v, b_m, b_v);
-     arma::vec del_tmp= proposed_params - current_params -tau*del_pi_current;
-     double log_q01= - ssq(del_tmp )/(4*tau);
-     
-     
-     del_tmp= current_params- proposed_params -tau*del_pi_proposed;
-     // del_tmp.print("del_tmp for q10");
-     double log_q10= - ssq(del_tmp )/(4*tau);
-     
-     double log_pi_current=logpi_lognorm(nj_val1, nj_val2, survtime1,  ss_survtime1, 
-     survtime2, ss_survtime2,  
-     current_params, a0, df0, 
-     mu_m, mu_v, b_m, b_v),
-     log_pi_proposed=logpi_lognorm(nj_val1, nj_val2, survtime1,  ss_survtime1, 
-     survtime2, ss_survtime2,  
-     proposed_params, a0, df0, 
-     mu_m, mu_v, b_m, b_v);
-     
-     // Rcpp::Rcout<<"log_pi_current =" <<log_pi_current << " log_pi_proposed =" <<log_pi_proposed<<endl;
-     // (del_pi_current.t()).print("del_pi_current"); (del_pi_proposed.t()).print("del_pi_proposed");
-     // (current_params.t()).print("current_params"); (proposed_params.t()).print("proposed_params");
-     double log_prob= log_pi_proposed + log_q10 -( log_pi_current +log_q01);
-     
-     if(log(randu()) <log_prob){
-     current_params=proposed_params;
-     mu0=proposed_params(0); beta0=exp(proposed_params(1));
-     ++acceptance;
-     }*/
-    
     update_lognorm_hyper(nj_val1, nj_val2, survtime1, ss_survtime1,
                          survtime2, ss_survtime2,
                          a0, df0, mu_m, mu_v, b_m, b_v,

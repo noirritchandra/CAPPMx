@@ -81,9 +81,10 @@ In case the model fit is good, the distribution of the elements of each row of t
 }
 }
 \description{
-Fit the CAPPMx on treatment arm and RWD with survival endpoints. Currently the package only supports right-censored outcomes.
+Fit the CAPPMx on treatment arm and RWD with survival endpoints.
+ Currently the package only supports right-censored outcomes.
 }
-\details{
+\note{
 The following \strong{MUST BE} ensured 
 \itemize{
 \item{\code{nrow(cat_cov_trt)=nrow(cont_cov_trt)=length(response_trt)=length(surv_ind_trt)}}

@@ -314,7 +314,8 @@ average_trt_effect=function(result, burnin=200){
 
 #' Fit CAPPMx Model
 #'
-#' Fit the CAPPMx on treatment arm and RWD with survival endpoints. Currently the package only supports right-censored outcomes.
+#' Fit the CAPPMx on treatment arm and RWD with survival endpoints.
+#'  Currently the package only supports right-censored outcomes.
 #'
 #' @param cat_cov_trt The matrix of categorical variables in the Treatment arm.  
 #' @param cont_cov_trt The matrix of continuous variables in the Treatment arm. 
@@ -335,7 +336,7 @@ average_trt_effect=function(result, burnin=200){
 #' @param del_range_alp2 A vector of length 2 indicating the range of the HMC tuning parameter \eqn{\Delta t}  for updating the Dirichlet concentration parameter \eqn{\alpha_2} in the mixture model of Treatment arm.
 #' @param nleapfrog_alp2 A positive integer indicating the number of Leapfrog steps in the  HMC update step for updating \eqn{\alpha_2}.
 #'
-#' @details
+#' @note
 #' The following \strong{MUST BE} ensured 
 #' \itemize{
 #' \item{\code{nrow(cat_cov_trt)=nrow(cont_cov_trt)=length(response_trt)=length(surv_ind_trt)}}
