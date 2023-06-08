@@ -1950,7 +1950,7 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
         // (probs.t()).print("probs :");
       } else{
         log_DEN=log_sum_exp(log_probs);
-        probs= normalise(exp(log_probs-log_DEN) ,1);
+        probs= exp(log_probs-log_DEN);//normalise(exp(log_probs-log_DEN) ,1);
       }
       
       // log_probs.print("log_probs: ");
