@@ -102,19 +102,27 @@ double rig(double mu){
   else return mu / x_div_mu;
 }
 
-long double log_sum_exp(arma::vec x) 
+//' log_sum_exp
+//'
+//' A numerically stable version of \code{log(sum(exp(x)))}
+//' @param x a numeric vector
+//'
+//' @return The natural logarithm of sum of \code{exp(x)}
+//' @export
+// [[Rcpp::export]]
+double log_sum_exp(arma::vec x) 
 {
   arma::uword max_ind=x.index_max();
   double maxVal= x(max_ind);
   
-  long double sum_exp=0.0;
+  double sum_exp=0.0;
   
-  for (unsigned int i = 0; i < x.n_elem ; ++i){
+  for (unsigned  i = 0; i < x.n_elem ; ++i){
     if(i !=max_ind)
-      sum_exp += expl((long double) (x(i) - maxVal));
+      sum_exp += exp(  (x(i) - maxVal));
   }
   
-  return log1pl(sum_exp)+maxVal ;
+  return log1p(sum_exp)+maxVal ;
 }
 
 inline double multiplier_fn(double niw_nu, double niw_kap, int k){

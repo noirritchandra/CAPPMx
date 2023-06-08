@@ -8,7 +8,6 @@ hazard.rate=function(t, lambda, pi )
   density.fn(t, lambda, pi ) / survival.fn(t, lambda, pi )
 
 
-
 model_fitting_qqplot=function(result, st1,nu1, st2,nu2, burnin=1e3){
   # library(plyr);library(reshape2); library(ggplot2)
   # st1=dat.clinical$OS.weeks+inc; nu1=dat.clinical$OS.failure

@@ -23,6 +23,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// log_sum_exp
+double log_sum_exp(arma::vec x);
+RcppExport SEXP _CAPPMx_log_sum_exp(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(log_sum_exp(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sanity
 void sanity(arma::uvec x);
 RcppExport SEXP _CAPPMx_sanity(SEXP xSEXP) {
@@ -127,6 +138,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_CAPPMx_rig", (DL_FUNC) &_CAPPMx_rig, 1},
+    {"_CAPPMx_log_sum_exp", (DL_FUNC) &_CAPPMx_log_sum_exp, 1},
     {"_CAPPMx_sanity", (DL_FUNC) &_CAPPMx_sanity, 1},
     {"_CAPPMx_mixture_cat", (DL_FUNC) &_CAPPMx_mixture_cat, 11},
     {"_CAPPMx_common_atoms_cat", (DL_FUNC) &_CAPPMx_common_atoms_cat, 20},

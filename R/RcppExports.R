@@ -5,6 +5,17 @@ rig <- function(mu) {
     .Call(`_CAPPMx_rig`, mu)
 }
 
+#' log_sum_exp
+#'
+#' A numerically stable version of \code{log(sum(exp(x)))}
+#' @param x a numeric vector
+#'
+#' @return The natural logarithm of sum of \code{exp(x)}
+#' @export
+log_sum_exp <- function(x) {
+    .Call(`_CAPPMx_log_sum_exp`, x)
+}
+
 sanity <- function(x) {
     invisible(.Call(`_CAPPMx_sanity`, x))
 }
