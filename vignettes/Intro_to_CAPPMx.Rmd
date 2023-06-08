@@ -1,0 +1,110 @@
+---
+title: "Introduction to  CAPPMx"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to  CAPPMx}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(CAPPMx)
+library(mvtnorm)
+set.seed(1)
+```
+
+```{r message=FALSE, results=FALSE, warning=FALSE, comment=FALSE}
+p=10
+nsamp1=100
+samp.ratio=6
+delta_vals=c(-1,0,1,3)
+nrep=500
+prob_rwd=.65
+prob_trt=.85
+
+p_cat=3;p_cont=p-p_cat
+nsamp2=samp.ratio * nsamp1
+k2=2 ####number of true cluster
+
+###########NEW NON_LIN CODE CHUNK########
+mu=matrix(0,nrow=k2+1,ncol=p-3)
+mu[1,1:2]=mu[2,5:6]=2
+
+# weight2=sample.int(n=7,size=k2,replace=F)
+
+
+lab1= sample.int(n=k2,size=nsamp1, replace = T)
+lab2= sample(1:(k2+1),size=nsamp2, replace = T,prob = c(1,1,4))
+
+X1.cont=matrix(0, nrow=nsamp1,ncol=p_cont)
+X2.cont=matrix(0, nrow=nsamp2,ncol=p_cont); X2.cat=matrix(0, nrow=nsamp2,ncol=p_cat);
+
+var_each_mix=.05
+##########Generate from case (iii) Lamb model ########################
+# lambda=simulate_lambda(d,p,1)
+for(i in 1:(k2+1)){
+  ####set RWD
+  inds=which(lab2==i)
+  if(length(inds>0)){
+    X2.cont[inds,]= rmvnorm(length(inds),mean = mu[i,],sigma = var_each_mix*diag(p_cont ) )
+    if(i<=k2) ###set categorical covs in RWD 
+      X2.cat[inds,]= matrix(rbinom(p_cat*length(inds), size=1,prob = prob_trt)  ,nrow=length(inds)) else
+        X2.cat[inds,]= matrix(rbinom(p_cat*length(inds), size=1,prob = prob_rwd)  ,nrow=length(inds))
+  }
+  rm(inds)
+  ###########
+  ####set Trt Arm
+  inds=which(lab1==i)
+  if(length(inds>0))
+    X1.cont[inds,]= rmvnorm(length(inds),mean = mu[i,],sigma = var_each_mix*diag(p_cont ) )
+  rm(inds)
+  ###########
+  # print(i)
+}
+
+X1.cat=matrix(rbinom(p_cat*nsamp1, size=1,prob = prob_trt)  ,nrow=nsamp1) ###set categorical covs in trt arm
+X1=cbind(X1.cont, X1.cat)
+X2=cbind(X2.cont, X2.cat)
+# rm(X1.cont, X1.cat, X2.cont,X2.cat)
+#########################################
+
+delta=1 ##treatment effect
+
+beta= sample(c(-1,2),size=p,replace = T )
+beta[sample.int(p,5)]=0
+
+y1=rnorm(X1%*%beta)+delta
+y2=rnorm(X2%*%beta)
+
+# bt=c(runif(1,40,60), runif(1,40,60) , runif(1,225,275), runif(1,-5,-1)  )
+# y1=gen_out(X1,bt,sig_sq=1)+delta
+# y2=gen_out(X2,bt,sig_sq=1)
+
+
+###########MAKE 5% ENTRIES MISSING in each covariate matrix###############
+make_missing=function(x, missing_percent=.05){
+  x.mis=x
+  x.mis[sample.int(n=length(x),size=floor(length(x)*.05)) ]=NA
+  x.mis
+}
+
+X1.cat.mis=make_missing(X1.cat);X1.cont.mis=make_missing(X1.cont)
+X2.cat.mis=make_missing(X2.cat);X2.cont.mis=make_missing(X2.cont)
+
+##################################################
+result=cappmx_fit(X1.cat.mis,X1.cont.mis,y1,rep(TRUE,length(y1)),
+           X2.cat.mis,X2.cont.mis,y2,rep(TRUE,length(y2)))
+```
+
+Get the PATE
+```{r}
+average_trt_effect(result)
+```
+

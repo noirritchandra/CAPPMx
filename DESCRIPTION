@@ -1,0 +1,17 @@
+Package: CAPPMx
+Type: Package
+Title: The Common Atoms Product Partition Model on Covariates for External Control
+Version: 1.0
+Date: 2021-07-14
+Author: Noirrit Kiran Chandra
+Encoding: UTF-8
+Maintainer: Noirrit Kiran Chandra <noirritchandra@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: What license is it under?
+Imports: Rcpp (>= 1.0.10), plyr,reshape2, ggplot2, caret, parallel, e1071, purrr, randomForest
+LinkingTo: Rcpp, RcppArmadillo, RcppGSL, RcppDist 
+RoxygenNote: 7.2.3
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
