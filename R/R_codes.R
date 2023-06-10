@@ -36,8 +36,8 @@ model_fitting_qqplot=function(result, st1,nu1, st2,nu2, burnin=1e3){
   
   qplot.dat=melt(unifs,id.vars= c("MCMC","colval"))
   
-ggplot(qplot.dat,aes(sample=value,group=MCMC,colour=colval)) +stat_qq(distribution = stats::qunif,geom = "line",size=.3) + scale_color_brewer(palette="Blues") +
-     theme(legend.position = "none") 
+  ggplot(qplot.dat,aes(sample=value,group=MCMC,colour=colval)) +stat_qq(distribution = stats::qunif,geom = "line",size=.3) + scale_color_brewer(palette="Blues") +
+    theme(legend.position = "none") 
 }
 
 hazard_plots=function(result, timepoints, burnin=1e3){
@@ -59,7 +59,7 @@ hazard_plots=function(result, timepoints, burnin=1e3){
   # hr.mean.compare=rbind(hr1.mean,hr2.mean)
   
   dens1= parallel::mcmapply(function(timepoints,lambda, pi) sapply(timepoints, density.fn, lambda,pi),
-                          lambda1,pi1,MoreArgs = list(timepoints=timepoints), mc.cores = parallel::detectCores()/2)
+                            lambda1,pi1,MoreArgs = list(timepoints=timepoints), mc.cores = parallel::detectCores()/2)
   surv1= parallel::mcmapply(function(timepoints,lambda, pi) sapply(timepoints, survival.fn, lambda,pi),
                             lambda1,pi1,MoreArgs = list(timepoints=timepoints), mc.cores = parallel::detectCores()/2)
   
@@ -85,7 +85,7 @@ hazard_plots=function(result, timepoints, burnin=1e3){
   hr1.dat=data.frame(HR= (hr1), Time=timepoints,Arm="Treatment")
   hr2.dat=data.frame(HR= (hr2), Time=timepoints,Arm="Synthetic")
   hr.mean.compare=rbind(hr1.dat,hr2.dat)
-
+  
   dat.hrplot=melt( hr.mean.compare , id.vars = c("Time","Arm"))
   p.hazard.rate <- ggplot(dat.hrplot,  aes(x=Time,y=value, color=Arm)) +
     geom_smooth(method = "loess",fullrange=T,se=F)
@@ -183,7 +183,7 @@ hazard_plots_lognormal=function(result, timepoints,parallel=F,  burnin=1e3){
   hazard.ratio=data.frame(HR= HR.mean, HR.band=t(HR.qtiles),  Time=(exp(timepoints)) )
   p.hazarad.ratio2=ggplot(data = hazard.ratio,  aes(Time,  HR)) + geom_line()+
     geom_ribbon(data=hazard.ratio,aes(ymin=HR.band.2.5.,ymax=HR.band.97.5.),alpha=0.3)+ylab("Hazard ratio")
-    
+  
   
   # dat.hrplot=melt( hazard.ratio , id.vars = "Time")
   # p.hazarad.ratio2 <- ggplot(dat.hrplot,  aes(Time,value)) +
@@ -319,11 +319,11 @@ average_trt_effect=function(result, burnin=200){
 #'
 #' @param cat_cov_trt The matrix of categorical variables in the Treatment arm.  
 #' @param cont_cov_trt The matrix of continuous variables in the Treatment arm. 
-#' @param response_trt The vector of \code{log}-transformed survival times in the Treatment arm.
+#' @param response_trt The vector of \strong{\code{log}-transformed} survival times in the Treatment arm.
 #' @param surv_ind_trt A logical vector of the same length as \code{response_trt} indicating whether the corresponding survival times is an observed failure or right-censored.
 #' @param cat_cov_rwd The matrix of categorical variables in the RWD.  
 #' @param cont_cov_rwd The matrix of continuous variables in the RWD.
-#' @param response_rwd The vector of \code{log}-transformed survival times in the RWD.
+#' @param response_rwd The vector of \strong{\code{log}-transformed} survival times in the RWD.
 #' @param surv_ind_rwd A logical vector of the same length as \code{response_rwd} indicating whether the corresponding survival times is an observed failure or right-censored.
 #' @param nmix Number of mixture components.
 #' @param nrun Number of MCMC iterations.
@@ -379,6 +379,38 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
     stop("Survival indicators must be logical variables!")
   # if(ncol(cat_cov_trt)!=ncol(cat_cov_rwd)| ncol(cont_cov_trt)!=ncol(cont_cov_rwd)| 
   #    nrow(cat_cov_trt)!=nrow(cont_cov_trt) | )
+  
+  ######CHECKS FOR NULL COV MATRICES AND SETTING NULLS
+  ######IN TRT ARM
+  if(is.null(cat_cov_trt)){
+    if(is.null(cont_cov_trt))
+      stop("Both covariate matrices are null in the treatment arm!") else{
+        cat_cov_trt=matrix(NA,nrow=nrow(cont_cov_trt),ncol=1)
+      }
+  }
+  if(is.null(cont_cov_trt)){
+    if(is.null(cat_cov_trt))
+      stop("Both covariate matrices are null in the treatment arm!") else{
+        cont_cov_trt=matrix(NA,nrow=nrow(cat_cov_trt),ncol=1)
+      }
+  }
+  ########################
+  
+  ######IN RWD######
+  if(is.null(cat_cov_rwd)){
+    if(is.null(cont_cov_rwd))
+      stop("Both covariate matrices are null in the RWD!") else{
+        cat_cov_rwd=matrix(NA,nrow=nrow(cont_cov_rwd),ncol=1)
+      }
+  }
+  if(is.null(cont_cov_rwd)){
+    if(is.null(cat_cov_rwd))
+      stop("Both covariate matrices are null in the RWD!") else{
+        cont_cov_rwd=matrix(NA,nrow=nrow(cat_cov_rwd),ncol=1)
+      }
+  }
+  ########################################################################
+  
   eta.cont1=as.matrix(cont_cov_trt)
   eta.cont2=as.matrix(cont_cov_rwd)
   eta.cont=rbind(eta.cont1,eta.cont2)
@@ -396,8 +428,8 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
   ###for the categorical covs 
   ###############
   non.na.inds=apply(eta.cat,1, function(eta) purrr::compose( which,"!",is.na)(eta)-1,simplify = F)
-
-    ###############
+  
+  ###############
   ###for the continuous covs 
   ###############
   non.na.inds_cont=apply(eta.cont,1, function(eta) purrr::compose( which,"!",is.na)(eta)-1,simplify = F)
@@ -456,17 +488,107 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
   mu_v= 1
   
   common_atoms_cat_lognormal( nmix, ncat=ncats,
-                                              a0=a0, df0=df0, mu_m=mu_m, mu_v=mu_v, b_m=b_m, b_v=b_v,#normal and lognormal hyperparameters for the response
-                                              nrun=nrun, burn=burn, thin=thin,
-                                              eta.cat1  , eta.cat2,
-                                              eta.cont1, eta.cont2,
-                                              response_trt, surv_ind_trt,
-                                              response_rwd, surv_ind_rwd,
-                                              non.na.inds, non.na.inds_cont,
-                                              labels1, labels2, 
-                                              del_range_lognorm=del_range_response, nleapfrog_lognorm=nleapfrog_response,
-                                              alpha_hyper = c(1,10),del_range_alp1 = del_range_alp1, nleapfrog_alp1 = nleapfrog_alp1,
-                                              del_range_alp2 = del_range_alp2, nleapfrog_alp2 = nleapfrog_alp2)
+                              a0=a0, df0=df0, mu_m=mu_m, mu_v=mu_v, b_m=b_m, b_v=b_v,#normal and lognormal hyperparameters for the response
+                              nrun=nrun, burn=burn, thin=thin,
+                              eta.cat1  , eta.cat2,
+                              eta.cont1, eta.cont2,
+                              response_trt, surv_ind_trt,
+                              response_rwd, surv_ind_rwd,
+                              non.na.inds, non.na.inds_cont,
+                              labels1, labels2, 
+                              del_range_lognorm=del_range_response, nleapfrog_lognorm=nleapfrog_response,
+                              alpha_hyper = c(1,10),del_range_alp1 = del_range_alp1, nleapfrog_alp1 = nleapfrog_alp1,
+                              del_range_alp2 = del_range_alp2, nleapfrog_alp2 = nleapfrog_alp2)
+}
+
+#' Investigating Population Equivalence
+#' 
+#'  @details
+#'  A randomly resampled set of covariates is selected from RWD with weights being the \emph{Importance-Resampling (IS)} ones
+#'  derived from the output of \code{\link{cappmx_fit}}.
+#'  The resampled subset and the covariate population in the treatment arm are merged 
+#'  into a single dataset and then we try to classify patients in the merged sample as originally RWD or single-arm treatment cohort.
+#'  For classification, we use Bayesian Additive Regression Tree (BART) and report  the 
+#'  area under the receiver operating characteristic curve (AUC) of the classification accuracy.
+#'  For comparison, we also subsample randomly (instead of using the IS weights) from RWD
+#'  to create another synthetic control arm and report the AUC.
+#' 
+#' @param cat_cov_trt The matrix of categorical variables in the Treatment arm.  
+#' @param cont_cov_trt The matrix of continuous variables in the Treatment arm. 
+#' @param cat_cov_rwd The matrix of categorical variables in the RWD.  
+#' @param cont_cov_rwd The matrix of continuous variables in the RWD. 
+#' @param result Output of \code{\link{cappmx_fit}} function.
+#' @param burnin Number of burnin samples to discard from \code{result}.
+#' @param cv_prop The value of \eqn{p} for a leave-\eqn{100\times p \%}-out 
+#' cross-validation for computing out-of-sample classification accuracy.
+#'
+#' @return A vector of AUC values corresponding to the proposed IS and 
+#' random resampling schemes, respectively.
+#' @export
+get_auc=function(cat_cov_trt,cont_cov_trt,
+                 cat_cov_rwd,cont_cov_rwd,
+                 result, burnin=200,cv_prop=.15){
+  X1=na.roughfix( cbind(cat_cov_trt, cont_cov_trt)) # dat1[,paste0("X.",1:p)]
+  X2=na.roughfix(cbind(cat_cov_rwd, cont_cov_rwd)) #dat2[,paste0("X.",1:p)]
+  
+  nsamp2=nrow(X2); n1= nrow(X1) #nsamp1
+  WR=T
+  ntest=round(cv_prop*n1,0)
+  n.cv=round(1/cv_prop,0)
+  
+  ############FIND AUC FOR IMPORTANCE RESAMPLED DATA###########
+  wts=colMeans(result$Weights2[-(1:burnin),])
+  sampled.data=X2[ sample.int(nsamp2,size = nsamp1,prob=wts,replace =WR),]
+  dat=rbind(X1,sampled.data)
+  labs=factor(c(rep(1,nsamp1),rep(2,nsamp1)))
+  auc_sampled=foreach(j=1:n.cv,.combine=c,.packages = c("dbarts","ROCR")) %do%{
+    inds=c(sample.int(n1,size=ntest,replace = F) ,
+           n1+sample.int(n1 ,size=ntest,replace = F) )
+    traindat=data.frame(x=dat[-inds,],y=labs[-inds])
+    testdat=data.frame(x=dat[inds,])
+    #####################BART
+    rf_model <- bart2(as.numeric(y)-1~. , data = traindat,test=testdat,combineChains=T)
+    rf_prediction=colMeans(pnorm(rf_model$yhat.test))
+    ########################
+    
+    ROC_rf=ROCR::prediction( rf_prediction, as.numeric(labs[inds])-1) ##for bart only
+    auc.perf=performance(ROC_rf,measure = "auc")
+    (auc.perf@y.values[[1]])
+    ########################
+  }
+  
+  AUC_adjusted=median(auc_sampled)
+  rm(sampled.data,dat,labs,wts)
+  #################################################################################
+  
+  ############FIND AUC FOR RANDOM RESAMPLED DATA###########
+  wts=rep(1,nsamp2)
+  sampled.data=X2[ sample.int(nsamp2,size = nsamp1,prob=wts,replace =WR),]
+  dat=rbind(X1,sampled.data)
+  labs=factor(c(rep(1,nsamp1),rep(2,nsamp1)))
+  
+  auc_sampled=foreach(j=1:n.cv,.combine=c,.packages = c("dbarts","ROCR")) %do%{
+    inds=c(sample.int(n1,size=ntest,replace = F) ,
+           n1+sample.int(n1 ,size=ntest,replace = F) )
+    traindat=data.frame(x=dat[-inds,],y=labs[-inds])
+    testdat=data.frame(x=dat[inds,])
+    #####################BART
+    rf_model <- bart2(as.numeric(y)-1~. , data = traindat,test=testdat,combineChains=T)
+    rf_prediction=colMeans(pnorm(rf_model$yhat.test))
+    ########################
+    
+    ROC_rf=ROCR::prediction( rf_prediction, as.numeric(labs[inds])-1) ##for bart only
+    auc.perf=performance(ROC_rf,measure = "auc")
+    (auc.perf@y.values[[1]])
+    ########################
+  }
+  
+  AUC_random=median(auc_sampled)
+  rm(sampled.data,dat,labs,wts)
+  #################################################################################
+  aucs=c(AUC_adjusted,AUC_random)
+  names(aucs)=c("IR_Adjusted", "Random")
+  aucs
 }
 
 gen_non_lin_output=function(x1,bt, sig_sq=1){

@@ -30,7 +30,7 @@ cappmx_fit(
 
 \item{cont_cov_trt}{The matrix of continuous variables in the Treatment arm.}
 
-\item{response_trt}{The vector of \code{log}-transformed survival times in the Treatment arm.}
+\item{response_trt}{The vector of \strong{\code{log}-transformed} survival times in the Treatment arm.}
 
 \item{surv_ind_trt}{A logical vector of the same length as \code{response_trt} indicating whether the corresponding survival times is an observed failure or right-censored.}
 
@@ -38,7 +38,7 @@ cappmx_fit(
 
 \item{cont_cov_rwd}{The matrix of continuous variables in the RWD.}
 
-\item{response_rwd}{The vector of \code{log}-transformed survival times in the RWD.}
+\item{response_rwd}{The vector of \strong{\code{log}-transformed} survival times in the RWD.}
 
 \item{surv_ind_rwd}{A logical vector of the same length as \code{response_rwd} indicating whether the corresponding survival times is an observed failure or right-censored.}
 

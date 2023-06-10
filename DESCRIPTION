@@ -8,7 +8,7 @@ Encoding: UTF-8
 Maintainer: Noirrit Kiran Chandra <noirritchandra@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 1.0.10), plyr,reshape2, ggplot2, caret, parallel, e1071, purrr, randomForest,data.table
+Imports: Rcpp (>= 1.0.10), plyr,reshape2, ggplot2, caret, parallel, e1071, purrr, randomForest, data.table, dbarts, ROCR,foreach
 LinkingTo: Rcpp, RcppArmadillo, RcppGSL, RcppDist 
 RoxygenNote: 7.2.3
 Suggests: 
@@ -16,5 +16,5 @@ Suggests:
     rmarkdown
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 4.2.2)
 LazyData: true
