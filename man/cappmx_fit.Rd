@@ -5,12 +5,12 @@
 \title{Fit CAPPMx Model}
 \usage{
 cappmx_fit(
-  cat_cov_trt,
-  cont_cov_trt,
+  cat_cov_trt = NULL,
+  cont_cov_trt = NULL,
   response_trt,
   surv_ind_trt,
-  cat_cov_rwd,
-  cont_cov_rwd,
+  cat_cov_rwd = NULL,
+  cont_cov_rwd = NULL,
   response_rwd,
   surv_ind_rwd,
   nmix = 15,

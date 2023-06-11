@@ -369,27 +369,33 @@ average_trt_effect=function(result, burnin=200){
 #' @export
 #'
 #' @examples
-cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
-                    cat_cov_rwd,cont_cov_rwd, response_rwd, surv_ind_rwd,
+cappmx_fit=function(cat_cov_trt=NULL,cont_cov_trt=NULL, response_trt, surv_ind_trt,
+                    cat_cov_rwd=NULL,cont_cov_rwd=NULL, response_rwd, surv_ind_rwd,
                     nmix=15, nrun=5e3,burn=1e3,thin=5,
                     del_range_response=c(.005,.02)*15, nleapfrog_response=3,
                     del_range_alp1 = c(.1,.3)*5, nleapfrog_alp1 = 4,
                     del_range_alp2 = c(.1,.3)*3, nleapfrog_alp2 = 3){
-  if(class(surv_ind_trt)!="logical" || class(surv_ind_rwd)!="logical" )
+  
+  isnullcat1=is.null(cat_cov_trt); isnullcont1=is.null(cont_cov_trt); isnullcat2=is.null(cat_cov_rwd); isnullcont2=is.null(cont_cov_rwd)
+  
+  if(isnullcat1 & isnullcont1 & isnullcat2 & isnullcont2 )
+    stop("All covariate matrices are null!")
+  
+  if(class(surv_ind_trt)!="logical" | class(surv_ind_rwd)!="logical" )
     stop("Survival indicators must be logical variables!")
   # if(ncol(cat_cov_trt)!=ncol(cat_cov_rwd)| ncol(cont_cov_trt)!=ncol(cont_cov_rwd)| 
   #    nrow(cat_cov_trt)!=nrow(cont_cov_trt) | )
   
   ######CHECKS FOR NULL COV MATRICES AND SETTING NULLS
   ######IN TRT ARM
-  if(is.null(cat_cov_trt)){
-    if(is.null(cont_cov_trt))
+  if(isnullcat1 ){
+    if(isnullcont1 )
       stop("Both covariate matrices are null in the treatment arm!") else{
         cat_cov_trt=matrix(NA,nrow=nrow(cont_cov_trt),ncol=1)
       }
   }
-  if(is.null(cont_cov_trt)){
-    if(is.null(cat_cov_trt))
+  if(isnullcont1 ){
+    if(isnullcat1)
       stop("Both covariate matrices are null in the treatment arm!") else{
         cont_cov_trt=matrix(NA,nrow=nrow(cat_cov_trt),ncol=1)
       }
@@ -397,14 +403,14 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
   ########################
   
   ######IN RWD######
-  if(is.null(cat_cov_rwd)){
-    if(is.null(cont_cov_rwd))
+  if(isnullcat2 ){
+    if(isnullcont2 )
       stop("Both covariate matrices are null in the RWD!") else{
         cat_cov_rwd=matrix(NA,nrow=nrow(cont_cov_rwd),ncol=1)
       }
   }
-  if(is.null(cont_cov_rwd)){
-    if(is.null(cat_cov_rwd))
+  if(isnullcont2 ){
+    if(isnullcat2)
       stop("Both covariate matrices are null in the RWD!") else{
         cont_cov_rwd=matrix(NA,nrow=nrow(cat_cov_rwd),ncol=1)
       }
@@ -416,7 +422,7 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
   eta.cont=rbind(eta.cont1,eta.cont2)
   
   eta.cat1=as.matrix(cat_cov_trt); rownames(eta.cat1)=NULL ;nsamp1=nrow(eta.cat1)
-  eta.cat2=as.matrix(cat_cov_rwd); rownames(eta.cat2)=NULL ; nsamp2=nrow(eta.cat2)
+  eta.cat2=as.matrix(cat_cov_rwd); rownames(eta.cat2)=NULL ;nsamp2=nrow(eta.cat2)
   eta.cat=rbind(eta.cat1,eta.cat2)
   ncats=apply(eta.cat,2, function(x) length(setdiff(unique(x),NA)))
   
@@ -448,25 +454,39 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
   }
   
   ds=matrix(0,nsamp2,nsamp2)
-  for(i in 1:nsamp2){
-    for(j in (i):nsamp2){
-      if(j>nsamp2)
-        print(j)
-      ds[i,j]=hamm_dist(eta.cat2[i,],eta.cat2[j,])
-      ds[j,i]=ds[i,j]
+  if(!isnullcat2 ){
+    for(i in 1:nsamp2){
+      for(j in (i):nsamp2){
+        if(j>nsamp2)
+          print(j)
+        ds[i,j]=hamm_dist(eta.cat2[i,],eta.cat2[j,])
+        ds[j,i]=ds[i,j]
+      }
     }
   }
   ds=as.dist(ds)
   
-  x=eta.cont2; x[!is.finite(x)]=0
-  ds=ds+ dist(x)
-  rm(x)
+  if(!isnullcont2 ){
+    x=eta.cont2; x[!is.finite(x)]=0
+    ds=ds+ dist(x)
+    rm(x)
+  }
   
   fit <- hclust (ds , method = "ward.D2" )
   labels2 <- cutree ( fit , k =min(nmix,7)) -1
   
-  eta.imputed2=cbind(na.roughfix(eta.cat2),na.roughfix(eta.cont2))
-  eta.imputed1=cbind(na.roughfix(eta.cat1),na.roughfix(eta.cont1))
+  #############NULL CHECKS###############
+  if(isnullcat2 ){
+    eta.imputed2=na.roughfix(eta.cont2)
+    eta.imputed1=na.roughfix(eta.cont1)
+  } else if(isnullcont2 ){
+    eta.imputed2=na.roughfix(eta.cat2)
+    eta.imputed1=na.roughfix(eta.cat1)
+  } else if(!isnullcat1 & !isnullcont1 & !isnullcat2 & !isnullcont2 ){
+    eta.imputed2=cbind(na.roughfix(eta.cat2),na.roughfix(eta.cont2))
+    eta.imputed1=cbind(na.roughfix(eta.cat1),na.roughfix(eta.cont1))
+  }  else stop("Check input covariates!")
+  ############################################################
   
   rffit=randomForest::randomForest(x=eta.imputed2,y=as.factor(labels2), na.action=na.roughfix)
   labels1=as.numeric(predict(rffit,eta.imputed1))-1
@@ -525,11 +545,24 @@ cappmx_fit=function(cat_cov_trt,cont_cov_trt, response_trt, surv_ind_trt,
 #' @return A vector of AUC values corresponding to the proposed IS and 
 #' random resampling schemes, respectively.
 #' @export
-get_auc=function(cat_cov_trt,cont_cov_trt,
-                 cat_cov_rwd,cont_cov_rwd,
+get_auc=function(cat_cov_trt=NULL,cont_cov_trt=NULL,
+                 cat_cov_rwd=NULL,cont_cov_rwd=NULL,
                  result, burnin=200,cv_prop=.15){
-  X1=na.roughfix( cbind(cat_cov_trt, cont_cov_trt)) # dat1[,paste0("X.",1:p)]
-  X2=na.roughfix(cbind(cat_cov_rwd, cont_cov_rwd)) #dat2[,paste0("X.",1:p)]
+  isnullcat1=is.null(cat_cov_trt); isnullcont1=is.null(cont_cov_trt); isnullcat2=is.null(cat_cov_rwd); isnullcont2=is.null(cont_cov_rwd)
+  if((isnullcat1&isnullcont1) | (isnullcat2&isnullcont2) )
+    stop("Check input covariance matrices!")
+  #############NULL CHECKS###############
+  if(isnullcat2 ){
+    X2=na.roughfix(cont_cov_rwd)
+    X1=na.roughfix(cont_cov_trt)
+  } else if(isnullcont2 ){
+    X2=na.roughfix(cat_cov_rwd)
+    X1=na.roughfix(cat_cov_trt)
+  } else if(!isnullcat1 & !isnullcont1 & !isnullcat2 & !isnullcont2 ){
+    X2=cbind(na.roughfix(cat_cov_rwd),na.roughfix(cont_cov_rwd))
+    X1=cbind(na.roughfix(cat_cov_trt),na.roughfix(cont_cov_trt))
+  }  else stop("Check input covariates!")
+  ############################################################
   
   nsamp2=nrow(X2); n1= nrow(X1) #nsamp1
   WR=T

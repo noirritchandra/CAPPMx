@@ -18,11 +18,11 @@
 // [[Rcpp::plugins(cpp17)]]
 // [[Rcpp::plugins(openmp)]]
 
+using namespace arma;
+
 #define crossprod(x) symmatu(x.t() * x)
 #define tcrossprod(x) symmatu(x * x.t())
 #define ssq(x) dot(x,x)
-
-using namespace arma;
 
 struct eta_list{
   arma::vec eta,sum_of_samples;
@@ -1616,10 +1616,14 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
   const double max_st=5*max(st);
   // Rcpp::Rcout<<"size(del)"<<size(del)<<endl;
   field<arma::uvec> non_na_obs(n), non_na_obs_cont(n);
+  unsigned cat_na_count=0;
   for(unsigned i=0;i<n;++i){ /**changing the data-type to field from input list**/ 
     non_na_obs(i)=Rcpp::as<arma::uvec>(non_na_obs1[i]);
+    cat_na_count+= (k-(non_na_obs(i)).n_elem);
+    
     non_na_obs_cont(i)=Rcpp::as<arma::uvec>(non_na_obs1_cont[i]);
   }
+  bool cat_na= (cat_na_count==(eta.n_rows* eta.n_cols)); //TRUE if cat covariate is NULL
   
   unsigned j;
   
@@ -1640,13 +1644,19 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
   arma::vec probs(nmix),log_probs(nmix), alpha_vec(k,fill::value(1.0)); ////assignment probability for each sample
   
   ////set atoms for the categorical covariate
+  
+  unsigned count_cat=0;
+  eta.for_each( [ &count_cat](umat::elem_type val) {count_cat+= (!std::isfinite(val) )  ; } );
+  
   field<arma::uvec> noccu(nmix,k);
   for(unsigned i=0;i<nmix;++i){
     for(unsigned j=0;j<k;++j){
-      if(ncat(j)<2){
-        Rcpp::Rcout<<"j= "<<j<<" ncat(j)<2"<<endl;
-        Rcpp::stop("");
-      }
+      if(!cat_na)
+        if(ncat(j)<2){
+          Rcpp::Rcout<<"j= "<<j<<" ncat(j)<2"<<endl;
+          Rcpp::stop("");
+        }
+      
       noccu(i,j).set_size(ncat(j));
       noccu(i,j).zeros();
     }
@@ -2162,7 +2172,6 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
   return Rcpp::List::create(Rcpp::Named("pimat1") =pimat1,
                             Rcpp::Named("pimat2") =pimat2,
                             // Rcpp::Named("Allocation variables") = alloc_var_mat,
-                            // Rcpp::Named("Weights")=weights,
                             Rcpp::Named("Weights2")=weights2,
                             Rcpp::Named("Lognormal_params1")=lognormal_params1,
                             Rcpp::Named("Lognormal_params2")=lognormal_params2,

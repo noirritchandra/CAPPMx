@@ -25,12 +25,17 @@ get_auc(
 
 \item{result}{Output of \code{\link{cappmx_fit}} function.}
 
-\item{burnin}{Number of burnin samples to exclude from \code{result}.}
+\item{burnin}{Number of burnin samples to discard from \code{result}.}
 
 \item{cv_prop}{The value of \eqn{p} for a leave-\eqn{100\times p \%}-out 
-cross-validation for computing out-of-sample classification accuracy.
-
- @details
+cross-validation for computing out-of-sample classification accuracy.}
+}
+\value{
+A vector of AUC values corresponding to the proposed IS and 
+random resampling schemes, respectively.
+}
+\description{
+@details
  A randomly resampled set of covariates is selected from RWD with weights being the \emph{Importance-Resampling (IS)} ones
  derived from the output of \code{\link{cappmx_fit}}.
  The resampled subset and the covariate population in the treatment arm are merged 
@@ -38,12 +43,5 @@ cross-validation for computing out-of-sample classification accuracy.
  For classification, we use Bayesian Additive Regression Tree (BART) and report  the 
  area under the receiver operating characteristic curve (AUC) of the classification accuracy.
  For comparison, we also subsample randomly (instead of using the IS weights) from RWD
- to create another synthetic control arm and report the AUC.}
-}
-\value{
-A vector of AUC values corresponding to the proposed IS and 
-random resampling schemes, respectively.
-}
-\description{
-Investigating Population Equivalence
+ to create another synthetic control arm and report the AUC.
 }
