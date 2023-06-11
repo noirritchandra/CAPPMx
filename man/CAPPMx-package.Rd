@@ -25,5 +25,5 @@ Maintainer: \packageMaintainer{CAPPMx}
 }
 \keyword{ CAPPMx }
 \examples{
-~~ See the package-vignette file. ~~
+## See the package-vignette file.
 }
