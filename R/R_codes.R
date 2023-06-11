@@ -305,8 +305,6 @@ gen_roc_for_covariates_bart=function(wts, eta.cat1, eta.cat2, test_prop=.15, q_s
 #'
 #' @return The estimated \emph{PATE} from the CAPPMx fit.
 #' @export
-#'
-#' @examples
 average_trt_effect=function(result, burnin=200){
   mean(rowSums( ( (result$Lognormal_params1[[1]] -result$Lognormal_params2[[1]])
                   * result$pimat1)[-(1:burnin),] ) )
@@ -367,8 +365,6 @@ average_trt_effect=function(result, burnin=200){
 #' \item{Acceptance rates}{A vector of length 3 indicating the acceptance rates of \eqn{\alpha_1}, \eqn{\alpha_2} and the \code{Lognormal_hyperparams}, respectively.}
 #'}
 #' @export
-#'
-#' @examples
 cappmx_fit=function(cat_cov_trt=NULL,cont_cov_trt=NULL, response_trt, surv_ind_trt,
                     cat_cov_rwd=NULL,cont_cov_rwd=NULL, response_rwd, surv_ind_rwd,
                     nmix=15, nrun=5e3,burn=1e3,thin=5,
@@ -648,29 +644,3 @@ gen_out=function(x1,bt, sig_sq=1){
     bt[3]*(x1[,5]>1.25)*(x1[,6]>1.25) + bt[4]*(x1[,p]>=1)*(x1[,p-1]>=1)  + 
     rnorm(n,sd = sqrt(sig_sq))
 }
-
-# 
-# timepoints=seq(20, 110, length.out = 50)
-# hr1= parallel::mcmapply(function(timepoints,lambda, pi) sapply(timepoints, hazard.rate, lambda,pi),
-#                         lambda1,pi1,MoreArgs = list(timepoints=timepoints), mc.cores = parallel::detectCores()/2)
-# hr2= parallel::mcmapply(function(timepoints,lambda, pi) sapply(timepoints, hazard.rate, lambda,pi),
-#                         lambda2,pi1,MoreArgs = list(timepoints=timepoints), mc.cores = parallel::detectCores()/2)
-# 
-# 
-# hr1.mean=data.frame(HR= rowMeans(hr1), Time=timepoints,Arm="Treatment")
-# hr2.mean=data.frame(HR=rowMeans(hr2), Time=timepoints,Arm="Synthetic")
-# hr.mean.compare=rbind(hr1.mean,hr2.mean)
-# 
-# dat.hrplot=melt( hr.mean.compare , id.vars = c("Time","Arm"))
-# p <- ggplot(dat.hrplot,  aes(x=Time,y=value, color=Arm)) +
-#   geom_smooth(method = "loess",fullrange=T,se=F)
-# 
-# 
-# hazard.ratio=data.frame(HR= (hr1/hr2)[ ,round(seq(1,ncol(hr1), length.out = 50), 0) ], Time=timepoints )
-# 
-# dat.hrplot=melt( hazard.ratio , id.vars = "Time")
-# p <- ggplot(dat.hrplot,  aes(Time,value)) +
-#   geom_smooth(method = "loess",fullrange=T,se=T)
-# 
-# 
-# sapply(timepoints, hazard.rate, lambda1,pi1)
