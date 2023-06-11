@@ -6,7 +6,7 @@
 \packageTitle{CAPPMx}
 }
 \description{
-An implementation of the Bayesian Nonparametric Common Atoms Regression by \insertRef{chandra_GBM22;textual}{CAPPMx}.
+An implementation of the Bayesian Nonparametric Common Atoms Regression by \insertCite{chandra_GBM22;textual}{CAPPMx}.
 }
 \details{
 
