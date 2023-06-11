@@ -6,7 +6,7 @@
 \packageTitle{CAPPMx}
 }
 \description{
-\packageDescription{CAPPMx}
+An implementation of the Bayesian Nonparametric Common Atoms Regression by \insertRef{chandra_GBM22;textual}{CAPPMx}.
 }
 \details{
 
@@ -21,14 +21,9 @@ The DESCRIPTION file:
 Maintainer: \packageMaintainer{CAPPMx}
 }
 \references{
-~~ Literature or other references for background information ~~
+\insertRef{chandra_GBM22}{CAPPMx}
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
-\keyword{ package }
-\seealso{
-~~ Optional links to other man pages, e.g. ~~
-~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
-}
+\keyword{ CAPPMx }
 \examples{
-~~ simple examples of the most important functions ~~
+~~ See the package-vignette file. ~~
 }

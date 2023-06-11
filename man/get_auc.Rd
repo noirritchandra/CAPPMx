@@ -5,10 +5,10 @@
 \title{Investigating Population Equivalence}
 \usage{
 get_auc(
-  cat_cov_trt,
-  cont_cov_trt,
-  cat_cov_rwd,
-  cont_cov_rwd,
+  cat_cov_trt = NULL,
+  cont_cov_trt = NULL,
+  cat_cov_rwd = NULL,
+  cont_cov_rwd = NULL,
   result,
   burnin = 200,
   cv_prop = 0.15
@@ -40,8 +40,11 @@ random resampling schemes, respectively.
  derived from the output of \code{\link{cappmx_fit}}.
  The resampled subset and the covariate population in the treatment arm are merged 
  into a single dataset and then we try to classify patients in the merged sample as originally RWD or single-arm treatment cohort.
- For classification, we use Bayesian Additive Regression Tree (BART) and report  the 
+ For classification, we use Bayesian Additive Regression Tree (BART) \insertCite{bart2010}{CAPPMx} and report  the 
  area under the receiver operating characteristic curve (AUC) of the classification accuracy.
  For comparison, we also subsample randomly (instead of using the IS weights) from RWD
  to create another synthetic control arm and report the AUC.
+}
+\references{
+\insertAllCited{}
 }

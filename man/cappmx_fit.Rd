@@ -81,6 +81,9 @@ In case the model fit is good, the distribution of the elements of each row of t
 }
 }
 \description{
+An implementation of the CAPPMx by \insertCite{chandra_GBM22;textual}{CAPPMx}.
+}
+\details{
 Fit the CAPPMx on treatment arm and RWD with survival endpoints.
  Currently the package only supports right-censored outcomes.
 }
@@ -97,4 +100,7 @@ For example, a covariate with three categories must be indicated using 0,1 and 2
 The package is under development. The user must format the inputs according to the above.
 
 The HMC tuning parameters may need to be adjusted manually if the default settings  yield low acceptance rates.
+}
+\references{
+\insertAllCited{}
 }

@@ -311,7 +311,9 @@ average_trt_effect=function(result, burnin=200){
 }
 
 #' Fit CAPPMx Model
-#'
+#' 
+#' An implementation of the CAPPMx by \insertCite{chandra_GBM22;textual}{CAPPMx}. 
+#' 
 #' Fit the CAPPMx on treatment arm and RWD with survival endpoints.
 #'  Currently the package only supports right-censored outcomes.
 #'
@@ -364,6 +366,8 @@ average_trt_effect=function(result, burnin=200){
 #' \item{Dirichlet_params}{A \code{n_mc}\eqn{\times}2 matrix of MCMC samples of \eqn{(\alpha_1,\alpha_2)}.}
 #' \item{Acceptance rates}{A vector of length 3 indicating the acceptance rates of \eqn{\alpha_1}, \eqn{\alpha_2} and the \code{Lognormal_hyperparams}, respectively.}
 #'}
+#' @references
+#' \insertAllCited{}
 #' @export
 cappmx_fit=function(cat_cov_trt=NULL,cont_cov_trt=NULL, response_trt, surv_ind_trt,
                     cat_cov_rwd=NULL,cont_cov_rwd=NULL, response_rwd, surv_ind_rwd,
@@ -524,7 +528,7 @@ cappmx_fit=function(cat_cov_trt=NULL,cont_cov_trt=NULL, response_trt, surv_ind_t
 #'  derived from the output of \code{\link{cappmx_fit}}.
 #'  The resampled subset and the covariate population in the treatment arm are merged 
 #'  into a single dataset and then we try to classify patients in the merged sample as originally RWD or single-arm treatment cohort.
-#'  For classification, we use Bayesian Additive Regression Tree (BART) and report  the 
+#'  For classification, we use Bayesian Additive Regression Tree (BART) \insertCite{bart2010}{CAPPMx} and report  the 
 #'  area under the receiver operating characteristic curve (AUC) of the classification accuracy.
 #'  For comparison, we also subsample randomly (instead of using the IS weights) from RWD
 #'  to create another synthetic control arm and report the AUC.
@@ -540,6 +544,8 @@ cappmx_fit=function(cat_cov_trt=NULL,cont_cov_trt=NULL, response_trt, surv_ind_t
 #'
 #' @return A vector of AUC values corresponding to the proposed IS and 
 #' random resampling schemes, respectively.
+#' @references
+#' \insertAllCited{}
 #' @export
 get_auc=function(cat_cov_trt=NULL,cont_cov_trt=NULL,
                  cat_cov_rwd=NULL,cont_cov_rwd=NULL,
@@ -644,3 +650,4 @@ gen_out=function(x1,bt, sig_sq=1){
     bt[3]*(x1[,5]>1.25)*(x1[,6]>1.25) + bt[4]*(x1[,p]>=1)*(x1[,p-1]>=1)  + 
     rnorm(n,sd = sqrt(sig_sq))
 }
+
