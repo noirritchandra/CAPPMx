@@ -1955,14 +1955,6 @@ Rcpp::List common_atoms_cat_lognormal(const unsigned nmix, arma::uvec ncat,
       // log_probs.print("log_probs: ");
       // probs.print("probs: ");
       
-      /*if(   gsl_fcmp(sum(probs),1.0,1e-5) ){
-       // Rcpp::Rcout<< "At jj="<<jj<<"sum_prob is 0"<<endl;
-       log_probs_max= max(log_probs);
-       log_probs-=log_probs_max;
-       
-       probs=normalise(exp(log_probs) ,1);
-      }*/
-      
       ////check if sum of the allocation probabilities is zero
       if(sum(probs)==0) Rcpp::stop("sum(probs)=0");
       ///////////////////////////////////////////////////////
