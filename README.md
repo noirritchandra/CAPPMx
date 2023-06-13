@@ -4,7 +4,7 @@ Synthetic Controls in Single Arm Clinical Trials
 Noirrit Kiran Chandra
 2023-06-12
 
-An implementation of the CA-PPMx model proposed by (Chandra et al. 2022;
+An implementation of the CA-PPMx model proposed by (Chandra et al. 2023;
 Müller, Chandra, and Sarkar 2023). Please cite our works.
 
 ### Installation
@@ -39,7 +39,7 @@ vignette("Intro_to_CAPPMx","CAPPMx")
 ### Glioblastoma Data
 
 A resampled version of the Glioblastoma dataset used by Chandra et al.
-(2022) is included in the `CAPPMx` package which can be accessed using
+(2023) is included in the `CAPPMx` package which can be accessed using
 the following:
 
 ``` r
@@ -68,7 +68,7 @@ head(MDACC_reproduced)
 
 <div id="ref-chandra_GBM22" class="csl-entry">
 
-Chandra, N. K., A. Sarkar, J de Groot, Y. Yuan, and P. and Müller. 2022.
+Chandra, N. K., A. Sarkar, J de Groot, Y. Yuan, and P. and Müller. 2023.
 “Bayesian Nonparametric Common Atoms Regression for Generating Synthetic
 Controls in Clinical Trials.” *arXiv Preprint arXiv:2201.00068*.
 
