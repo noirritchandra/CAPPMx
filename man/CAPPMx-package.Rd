@@ -13,7 +13,6 @@ An implementation of the Bayesian Nonparametric Common Atoms Regression by \inse
 The DESCRIPTION file:
 \packageDESCRIPTION{CAPPMx}
 \packageIndices{CAPPMx}
-~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
 \packageAuthor{CAPPMx}

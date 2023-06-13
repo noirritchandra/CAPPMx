@@ -2,7 +2,7 @@ Common Atoms Product Partition Model on Covariates for Generating
 Synthetic Controls in Single Arm Clinical Trials
 ================
 Noirrit Kiran Chandra
-2023-06-11
+2023-06-12
 
 An implementation of the CA-PPMx model proposed by (Chandra et al. 2022;
 Müller, Chandra, and Sarkar 2023). Please cite our works.
@@ -30,7 +30,11 @@ containing illustrations.
 library(CAPPMx)
 ```
 
-Check the `vignette` files of the package for the reference manual.
+Check the `vignette` files of the package for the reference manual:
+
+``` r
+vignette("Intro_to_CAPPMx","CAPPMx")
+```
 
 ### Glioblastoma Data
 
