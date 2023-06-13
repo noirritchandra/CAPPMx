@@ -298,12 +298,12 @@ gen_roc_for_covariates_bart=function(wts, eta.cat1, eta.cat2, test_prop=.15, q_s
   roc_merged<-rbind(roc,roc_random)
 }
 
-#' Calculate \emph{Potential Average Treatment Effect (PATE)} from the output of \code{cappmx_fit}.
+#' Calculate \emph{Average Treatment Effect (ATE)} from the output of \code{\link{cappmx_fit}}.
 #'
-#' @param result Output of \code{cappmx_fit}.
+#' @param result Output of \code{\link{cappmx_fit}}.
 #' @param burnin Number of burnin samples to discard
 #'
-#' @return The estimated \emph{PATE} from the CAPPMx fit.
+#' @return The estimated \emph{ATE} from the CAPPMx fit.
 #' @export
 average_trt_effect=function(result, burnin=200){
   mean(rowSums( ( (result$Lognormal_params1[[1]] -result$Lognormal_params2[[1]])

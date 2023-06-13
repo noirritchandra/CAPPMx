@@ -2,18 +2,18 @@
 % Please edit documentation in R/R_codes.R
 \name{average_trt_effect}
 \alias{average_trt_effect}
-\title{Calculate \emph{Potential Average Treatment Effect (PATE)} from the output of \code{cappmx_fit}.}
+\title{Calculate \emph{Average Treatment Effect (ATE)} from the output of \code{\link{cappmx_fit}}.}
 \usage{
 average_trt_effect(result, burnin = 200)
 }
 \arguments{
-\item{result}{Output of \code{cappmx_fit}.}
+\item{result}{Output of \code{\link{cappmx_fit}}.}
 
 \item{burnin}{Number of burnin samples to discard}
 }
 \value{
-The estimated \emph{PATE} from the CAPPMx fit.
+The estimated \emph{ATE} from the CAPPMx fit.
 }
 \description{
-Calculate \emph{Potential Average Treatment Effect (PATE)} from the output of \code{cappmx_fit}.
+Calculate \emph{Average Treatment Effect (ATE)} from the output of \code{\link{cappmx_fit}}.
 }

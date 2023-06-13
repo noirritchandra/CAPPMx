@@ -165,7 +165,7 @@ Next we proceed towards model-based analysis on treatment effects.
 
 #### Bayesian Model-Based Inference on Treatment Effect
 
-Estimate the treatment effect from the MCMC outputs
+Estimate the *average treatment effect* from the MCMC outputs stored in `result`
 
 ```{r}
 average_trt_effect(result)
@@ -224,7 +224,7 @@ Next we proceed towards model-based analysis on treatment effects.
 
 #### Bayesian Model-Based Inference on Treatment Effect
 
-Estimate the treatment effect from the MCMC outputs
+Estimate the *average treatment effect* from the MCMC outputs stored in `result`
 
 ```{r}
 average_trt_effect(result)
@@ -281,7 +281,7 @@ Next we proceed towards model-based analysis on treatment effects.
 
 #### Bayesian Model-Based Inference on Treatment Effect
 
-Estimate the treatment effect from the MCMC outputs
+Estimate the *average treatment effect* from the MCMC outputs stored in `result`
 
 ```{r}
 average_trt_effect(result)
