@@ -21,7 +21,7 @@ The DESCRIPTION file:
 Maintainer: \packageMaintainer{CAPPMx}
 }
 \references{
-\insertRef{chandra_GBM22,mueller_cam23}{CAPPMx}
+\insertAllCited{}
 }
 \keyword{ CAPPMx }
 \examples{
